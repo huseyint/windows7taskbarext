@@ -10,13 +10,13 @@ Global
 		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs09.codeplex.com/
-		SccProjectUniqueName0 = Huseyint.Windows7\\Huseyint.Windows7.csproj
-		SccProjectName0 = Huseyint.Windows7
-		SccLocalPath0 = Huseyint.Windows7
-		SccProjectUniqueName1 = Windows\u0020Forms\u0020Demo\\Windows\u0020Forms\u0020Demo.csproj
-		SccProjectName1 = Windows\u0020Forms\u0020Demo
-		SccLocalPath1 = Windows\u0020Forms\u0020Demo
-		SccLocalPath2 = .
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Huseyint.Windows7\\Huseyint.Windows7.csproj
+		SccProjectName1 = Huseyint.Windows7
+		SccLocalPath1 = Huseyint.Windows7
+		SccProjectUniqueName2 = Windows\u0020Forms\u0020Demo\\Windows\u0020Forms\u0020Demo.csproj
+		SccProjectName2 = Windows\u0020Forms\u0020Demo
+		SccLocalPath2 = Windows\u0020Forms\u0020Demo
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
