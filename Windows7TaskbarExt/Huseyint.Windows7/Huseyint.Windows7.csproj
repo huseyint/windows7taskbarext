@@ -48,6 +48,9 @@
     <Compile Include="..\LPTHUMBBUTTON.cs">
       <Link>Native\LPTHUMBBUTTON.cs</Link>
     </Compile>
+    <Compile Include="..\ProgressState.cs">
+      <Link>ProgressState.cs</Link>
+    </Compile>
     <Compile Include="..\RECT.cs">
       <Link>Native\RECT.cs</Link>
     </Compile>
@@ -61,7 +64,6 @@
       <Link>Native\Win32.cs</Link>
     </Compile>
     <Compile Include="IconHandle.cs" />
-    <Compile Include="ProgressState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskBarExtensions.cs" />
   </ItemGroup>

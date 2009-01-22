@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7
+namespace Huseyint.Windows7
 {
     public enum ProgressState
     {
