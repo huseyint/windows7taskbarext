@@ -5,6 +5,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Windows.Forms;
+    using Huseyint.Windows7.WindowsForms;
 
     public partial class MainForm : Form
     {

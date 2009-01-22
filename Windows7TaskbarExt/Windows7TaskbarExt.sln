@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huseyint.Windows7", "Huseyint.Windows7\Huseyint.Windows7.csproj", "{089093FE-99B8-41F3-A660-2A785068AE4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huseyint.Windows7.WindowsForms", "Huseyint.Windows7\Huseyint.Windows7.WindowsForms.csproj", "{089093FE-99B8-41F3-A660-2A785068AE4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows Forms Demo", "Windows Forms Demo\Windows Forms Demo.csproj", "{3ACA4372-24E0-453D-B477-4ADFA372C2B1}"
 EndProject
@@ -27,12 +27,12 @@ Global
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs09.codeplex.com/
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = Huseyint.Windows7\\Huseyint.Windows7.csproj
-		SccProjectName1 = Huseyint.Windows7
-		SccLocalPath1 = Huseyint.Windows7
-		SccProjectUniqueName2 = Windows\u0020Forms\u0020Demo\\Windows\u0020Forms\u0020Demo.csproj
-		SccProjectName2 = Windows\u0020Forms\u0020Demo
-		SccLocalPath2 = Windows\u0020Forms\u0020Demo
+		SccProjectUniqueName1 = Windows\u0020Forms\u0020Demo\\Windows\u0020Forms\u0020Demo.csproj
+		SccProjectName1 = Windows\u0020Forms\u0020Demo
+		SccLocalPath1 = Windows\u0020Forms\u0020Demo
+		SccProjectUniqueName2 = Huseyint.Windows7\\Huseyint.Windows7.WindowsForms.csproj
+		SccProjectName2 = Huseyint.Windows7
+		SccLocalPath2 = Huseyint.Windows7
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

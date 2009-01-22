@@ -81,9 +81,9 @@
     <None Include="Generic_Application.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Huseyint.Windows7\Huseyint.Windows7.csproj">
+    <ProjectReference Include="..\Huseyint.Windows7\Huseyint.Windows7.WindowsForms.csproj">
       <Project>{089093FE-99B8-41F3-A660-2A785068AE4D}</Project>
-      <Name>Huseyint.Windows7</Name>
+      <Name>Huseyint.Windows7.WindowsForms</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
