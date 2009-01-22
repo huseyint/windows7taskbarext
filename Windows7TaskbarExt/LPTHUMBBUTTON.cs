@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.Native
+namespace Huseyint.Windows7.Native
 {
     using System;
     using System.Runtime.InteropServices;
@@ -7,13 +7,13 @@
     internal struct LPTHUMBBUTTON
     {
         public uint dwMask;
-        
+
         public uint iId;
-        
+
         public uint iBitmap;
-        
+
         public IntPtr hIcon;
-        
+
         [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 260)]
         public string szTip;
 

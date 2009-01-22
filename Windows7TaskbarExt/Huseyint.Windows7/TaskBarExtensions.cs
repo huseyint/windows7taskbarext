@@ -17,7 +17,7 @@
         {
             messageIdentifier = Win32.WM_NULL;
 
-            currentOverlayIcon = IntPtr.Zero;
+            currentOverlayIcon = new IconHandle();
             currentOverlayIconAccessibilityText = string.Empty;
             currentProgressState = ProgressState.NoProgress;
         }
@@ -31,7 +31,7 @@
 
         internal ITaskbarList3 TaskbarList { get; private set; }
 
-        private IntPtr currentOverlayIcon;
+        private IconHandle currentOverlayIcon;
 
         private string currentOverlayIconAccessibilityText;
 
@@ -55,7 +55,7 @@
                     TaskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.CLSID_TaskbarList));
                 }
 
-                if (currentOverlayIcon != IntPtr.Zero || currentProgressState != ProgressState.NoProgress)
+                if (!currentOverlayIcon.IsInvalid || currentProgressState != ProgressState.NoProgress)
                 {
                     ThreadPool.QueueUserWorkItem(delegate
                     {
@@ -81,19 +81,18 @@
         {
             if (disposing)
             {
-            }
-
-            if (currentOverlayIcon != IntPtr.Zero)
-            {
-                Win32.DestroyIcon(currentOverlayIcon);
+                if (currentOverlayIcon != null)
+                {
+                    currentOverlayIcon.Dispose();
+                }
             }
         }
 
-        private void SetOverlayIconCore(IntPtr hIcon, string accessibilityText)
+        private void SetOverlayIconCore(IconHandle hIcon, string accessibilityText)
         {
-            if (currentOverlayIcon != IntPtr.Zero && currentOverlayIcon != hIcon)
+            if (!currentOverlayIcon.IsInvalid && currentOverlayIcon != hIcon)
             {
-                Win32.DestroyIcon(currentOverlayIcon);
+                currentOverlayIcon.Dispose();
             }
 
             currentOverlayIcon = hIcon;
@@ -226,7 +225,7 @@
         {
             CheckOperation();
 
-            var hIcon = icon == null ? IntPtr.Zero : icon.GetHicon();
+            var hIcon = icon == null ? new IconHandle() : new IconHandle(icon.GetHicon());
 
             try
             {
@@ -258,7 +257,7 @@
 
             try
             {
-                instance.SetOverlayIconCore(IntPtr.Zero, string.Empty);
+                instance.SetOverlayIconCore(new IconHandle(IntPtr.Zero), string.Empty);
             }
             catch (COMException ex)
             {

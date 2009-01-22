@@ -36,16 +36,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Native\ITaskbarList3.cs" />
-    <Compile Include="Native\LPTHUMBBUTTON.cs" />
-    <Compile Include="Native\RECT.cs" />
-    <Compile Include="Native\TBATFLAG.cs" />
-    <Compile Include="Native\TBPFLAG.cs" />
-    <Compile Include="Native\Win32.cs" />
+    <Compile Include="..\ITaskbarList3.cs">
+      <Link>Native\ITaskbarList3.cs</Link>
+    </Compile>
+    <Compile Include="..\LPTHUMBBUTTON.cs">
+      <Link>Native\LPTHUMBBUTTON.cs</Link>
+    </Compile>
+    <Compile Include="..\RECT.cs">
+      <Link>Native\RECT.cs</Link>
+    </Compile>
+    <Compile Include="..\TBATFLAG.cs">
+      <Link>Native\TBATFLAG.cs</Link>
+    </Compile>
+    <Compile Include="..\TBPFLAG.cs">
+      <Link>Native\TBPFLAG.cs</Link>
+    </Compile>
+    <Compile Include="..\Win32.cs">
+      <Link>Native\Win32.cs</Link>
+    </Compile>
+    <Compile Include="IconHandle.cs" />
     <Compile Include="ProgressState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskBarExtensions.cs" />

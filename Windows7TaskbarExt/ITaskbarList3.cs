@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.Native
+namespace Huseyint.Windows7.Native
 {
     using System;
     using System.Runtime.InteropServices;
@@ -110,7 +110,7 @@
         /// for accessibility purposes.</param>
         void SetOverlayIcon(
             [In] IntPtr hWnd,
-            [In] IntPtr hIcon,
+            [In] IconHandle hIcon,
             [In] string pszDescription);
 
         void SetThumbnailTooltip(

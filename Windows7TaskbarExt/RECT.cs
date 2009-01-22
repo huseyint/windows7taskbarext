@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.Native
+namespace Huseyint.Windows7.Native
 {
     using System;
     using System.Drawing;
