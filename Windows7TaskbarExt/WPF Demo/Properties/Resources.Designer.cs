@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Huseyint.Windows7.WindowsForms.Demo.Properties {
+namespace Huseyint.Windows7.WPF.Demo.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Huseyint.Windows7.WindowsForms.Demo.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Huseyint.Windows7.WindowsForms.Demo.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Huseyint.Windows7.WPF.Demo.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

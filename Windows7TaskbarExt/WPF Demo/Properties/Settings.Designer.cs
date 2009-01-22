@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Huseyint.Windows7.WindowsForms.Demo.Properties {
+namespace Huseyint.Windows7.WPF.Demo.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

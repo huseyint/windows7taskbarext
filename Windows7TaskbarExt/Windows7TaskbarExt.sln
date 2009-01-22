@@ -21,9 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{F61C4F
 		Win32.cs = Win32.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huseyint.Windows7.WPF", "Huseyint.Windows7.WPF\Huseyint.Windows7.WPF.csproj", "{FA1FD008-93C0-4196-B6EE-6BFCE3184CF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF Demo", "WPF Demo\WPF Demo.csproj", "{24F1B542-6008-4C8F-9068-AFD337B99707}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs09.codeplex.com/
 		SccLocalPath0 = .
@@ -33,6 +37,12 @@ Global
 		SccProjectUniqueName2 = Huseyint.Windows7\\Huseyint.Windows7.WindowsForms.csproj
 		SccProjectName2 = Huseyint.Windows7
 		SccLocalPath2 = Huseyint.Windows7
+		SccProjectUniqueName3 = Huseyint.Windows7.WPF\\Huseyint.Windows7.WPF.csproj
+		SccProjectName3 = Huseyint.Windows7.WPF
+		SccLocalPath3 = Huseyint.Windows7.WPF
+		SccProjectUniqueName4 = WPF\u0020Demo\\WPF\u0020Demo.csproj
+		SccProjectName4 = WPF\u0020Demo
+		SccLocalPath4 = WPF\u0020Demo
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +57,14 @@ Global
 		{3ACA4372-24E0-453D-B477-4ADFA372C2B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ACA4372-24E0-453D-B477-4ADFA372C2B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ACA4372-24E0-453D-B477-4ADFA372C2B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA1FD008-93C0-4196-B6EE-6BFCE3184CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1FD008-93C0-4196-B6EE-6BFCE3184CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1FD008-93C0-4196-B6EE-6BFCE3184CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1FD008-93C0-4196-B6EE-6BFCE3184CF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24F1B542-6008-4C8F-9068-AFD337B99707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24F1B542-6008-4C8F-9068-AFD337B99707}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24F1B542-6008-4C8F-9068-AFD337B99707}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24F1B542-6008-4C8F-9068-AFD337B99707}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

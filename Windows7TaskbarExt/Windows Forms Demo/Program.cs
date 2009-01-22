@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.Demo
+﻿namespace Huseyint.Windows7.WindowsForms.Demo
 {
     using System;
     using System.Windows.Forms;

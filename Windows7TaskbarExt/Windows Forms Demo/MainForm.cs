@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.Demo
+﻿namespace Huseyint.Windows7.WindowsForms.Demo
 {
     using System;
     using System.Drawing;
@@ -17,7 +17,7 @@
         private void SetOverlayIconButton_Click(object sender, System.EventArgs e)
         {
             var imageName = string.Format(
-                "Huseyint.Windows7.Demo.Images.{0}.png",
+                "Huseyint.Windows7.WindowsForms.Demo.Images.{0}.png",
                 overlayIconsCombo.Text);
 
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream(imageName))
