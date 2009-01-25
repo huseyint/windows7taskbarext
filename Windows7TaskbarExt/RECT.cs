@@ -12,37 +12,45 @@ namespace Huseyint.Windows7.Native
         public int Right;
         public int Bottom;
 
-        public RECT(int left_, int top_, int right_, int bottom_)
+        public RECT(int left, int top, int right, int bottom)
         {
-            Left = left_;
-            Top = top_;
-            Right = right_;
-            Bottom = bottom_;
+            this.Left = left;
+            this.Top = top;
+            this.Right = right;
+            this.Bottom = bottom;
         }
 
-        public int Height { get { return Bottom - Top; } }
-        public int Width { get { return Right - Left; } }
-        public Size Size { get { return new Size(Width, Height); } }
-
-        public Point Location { get { return new Point(Left, Top); } }
-
-        // Handy method for converting to a System.Drawing.Rectangle
-        public Rectangle ToRectangle()
-        { return Rectangle.FromLTRB(Left, Top, Right, Bottom); }
-
-        public static RECT FromRectangle(Rectangle rectangle)
+        public int Height
         {
-            return new RECT(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+            get
+            {
+                return this.Bottom - this.Top;
+            }
         }
 
-        public override int GetHashCode()
+        public int Width
         {
-            return Left ^ ((Top << 13) | (Top >> 0x13))
-              ^ ((Width << 0x1a) | (Width >> 6))
-              ^ ((Height << 7) | (Height >> 0x19));
+            get
+            {
+                return this.Right - this.Left;
+            }
         }
 
-        #region Operator overloads
+        public Size Size
+        {
+            get
+            {
+                return new Size(this.Width, this.Height);
+            }
+        }
+
+        public Point Location
+        {
+            get
+            {
+                return new Point(this.Left, this.Top);
+            }
+        }
 
         public static implicit operator Rectangle(RECT rect)
         {
@@ -54,6 +62,22 @@ namespace Huseyint.Windows7.Native
             return FromRectangle(rect);
         }
 
-        #endregion
+        public static RECT FromRectangle(Rectangle rectangle)
+        {
+            return new RECT(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+        }
+
+        // Handy method for converting to a System.Drawing.Rectangle
+        public Rectangle ToRectangle()
+        {
+            return Rectangle.FromLTRB(this.Left, this.Top, this.Right, this.Bottom);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Left ^ ((this.Top << 13) | (this.Top >> 0x13))
+              ^ ((this.Width << 0x1a) | (this.Width >> 6))
+              ^ ((this.Height << 7) | (this.Height >> 0x19));
+        }
     }
 }

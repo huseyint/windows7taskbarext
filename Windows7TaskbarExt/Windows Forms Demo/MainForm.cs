@@ -11,14 +11,14 @@
     {
         public MainForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void SetOverlayIconButton_Click(object sender, System.EventArgs e)
         {
             var imageName = string.Format(
                 "Huseyint.Windows7.WindowsForms.Demo.Images.{0}.png",
-                overlayIconsCombo.Text);
+                this.overlayIconsCombo.Text);
 
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream(imageName))
             using (var image = (Bitmap)Image.FromStream(stream))
@@ -34,7 +34,7 @@
 
         private void SetProgressStateButton_Click(object sender, System.EventArgs e)
         {
-            TaskBarExtensions.SetProgressState((ProgressState)progressStatesCombo.SelectedValue);
+            TaskBarExtensions.SetProgressState((ProgressState)this.progressStatesCombo.SelectedValue);
         }
 
         private void SimulateProgressStatesButton_Click(object sender, EventArgs e)
@@ -42,6 +42,7 @@
             ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
             {
                 // Simulate estimated calculation of a long operation
+                TaskBarExtensions.SetProgressState(ProgressState.NoProgress);
                 TaskBarExtensions.SetProgressState(ProgressState.Indeterminate);
                 
                 Thread.Sleep(2000);

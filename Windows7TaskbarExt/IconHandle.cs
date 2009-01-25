@@ -1,4 +1,4 @@
-﻿namespace Huseyint.Windows7.WindowsForms
+namespace Huseyint.Windows7
 {
     using System;
     using System.Runtime.InteropServices;
@@ -19,20 +19,9 @@
         }
 
         [SecurityTreatAsSafe, SecurityCritical]
-        internal IconHandle(IntPtr ptr, bool fOwnsHandle)
-            : base(ptr, fOwnsHandle)
+        internal IconHandle(IntPtr ptr, bool ownsHandle)
+            : base(ptr, ownsHandle)
         {
-        }
-
-        public HandleRef MakeHandleRef(object wrapper)
-        {
-            return new HandleRef(wrapper, base.handle);
-        }
-
-        [SecurityCritical]
-        protected override bool ReleaseHandle()
-        {
-            return Win32.DestroyIcon(base.handle);
         }
 
         public override bool IsInvalid
@@ -40,8 +29,13 @@
             [SecurityTreatAsSafe, SecurityCritical]
             get
             {
-                return (base.handle == IntPtr.Zero);
+                return this.handle == IntPtr.Zero;
             }
+        }
+
+        public HandleRef MakeHandleRef(object wrapper)
+        {
+            return new HandleRef(wrapper, this.handle);
         }
 
         public override bool Equals(object obj)
@@ -54,6 +48,12 @@
         public override int GetHashCode()
         {
             return this.handle.ToInt32();
+        }
+
+        [SecurityCritical]
+        protected override bool ReleaseHandle()
+        {
+            return Win32.DestroyIcon(this.handle);
         }
     }
 }

@@ -1,33 +1,108 @@
 ﻿namespace Huseyint.Windows7.WPF
 {
     using System;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
     using System.Windows;
-    using System.Windows.Media;
     using Huseyint.Windows7.Native;
 
     public class TaskbarButton : FrameworkElement
     {
-        public ImageSource OverlayIcon
-        {
-            get { return (ImageSource)GetValue(OverlayIconProperty); }
-            set { SetValue(OverlayIconProperty, value); }
-        }
-        public static readonly DependencyProperty OverlayIconProperty =
-            DependencyProperty.Register("OverlayIcon", typeof(ImageSource), typeof(TaskbarButton),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnOverlayIconChanged));
+        public static readonly DependencyProperty OverlayIconProperty = DependencyProperty.Register(
+            "OverlayIcon",
+            typeof(OverlayIcon),
+            typeof(TaskbarButton),
+            new UIPropertyMetadata(null, OnOverlayIconPropertyChanged));
 
+        public static readonly DependencyProperty ProgressStateProperty = DependencyProperty.Register(
+            "ProgressState",
+            typeof(ProgressState),
+            typeof(TaskbarButton),
+            new UIPropertyMetadata(ProgressState.NoProgress, OnProgressStatePropertyChanged));
+
+        public static readonly DependencyProperty ProgressValueProperty = DependencyProperty.Register(
+            "ProgressValue",
+            typeof(ulong),
+            typeof(TaskbarButton),
+            new UIPropertyMetadata(ulong.MinValue, OnProgressChanged));
+
+        public static readonly DependencyProperty ProgressValueTotalProperty = DependencyProperty.Register(
+            "ProgressValueTotal",
+            typeof(ulong),
+            typeof(TaskbarButton),
+            new UIPropertyMetadata(ulong.MaxValue, OnProgressChanged));
 
         private IntPtr windowHandle;
 
         private ITaskbarList3 taskbarList;
 
-        public TaskbarButton()
+        public OverlayIcon OverlayIcon
         {
+            get { return (OverlayIcon)GetValue(OverlayIconProperty); }
+            set { SetValue(OverlayIconProperty, value); }
         }
 
-        static void OnOverlayIconChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        public ProgressState ProgressState
+        {
+            get { return (ProgressState)GetValue(ProgressStateProperty); }
+            set { SetValue(ProgressStateProperty, value); }
+        }
+
+        public ulong ProgressValue
+        {
+            get { return (ulong)GetValue(ProgressValueProperty); }
+            set { SetValue(ProgressValueProperty, value); }
+        }
+
+        public ulong ProgressValueTotal
+        {
+            get { return (ulong)GetValue(ProgressValueTotalProperty); }
+            set { SetValue(ProgressValueTotalProperty, value); }
+        }
+
+        internal void UpdateIcon()
+        {
+            if (this.taskbarList == null || this.windowHandle == IntPtr.Zero || this.OverlayIcon == null)
+            {
+                return;
+            }
+
+            this.taskbarList.SetOverlayIcon(
+                this.windowHandle,
+                this.OverlayIcon.GetIconHandle(),
+                this.OverlayIcon.AccessibilityText);
+        }
+
+        internal void UpdateProgressState()
+        {
+            if (this.taskbarList == null || this.windowHandle == IntPtr.Zero)
+            {
+                return;
+            }
+
+            this.taskbarList.SetProgressState(
+                this.windowHandle,
+                (TBPFLAG)this.ProgressState);
+        }
+
+        internal void UpdateProgressValue()
+        {
+            if (this.taskbarList == null || this.windowHandle == IntPtr.Zero)
+            {
+                return;
+            }
+
+            this.taskbarList.SetProgressValue(
+                this.windowHandle,
+                this.ProgressValue,
+                this.ProgressValueTotal);
+        }
+
+        internal void Initialize(IntPtr windowHandle, ITaskbarList3 taskbarList)
+        {
+            this.windowHandle = windowHandle;
+            this.taskbarList = taskbarList;
+        }
+
+        private static void OnOverlayIconPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
             var tb = depObj as TaskbarButton;
 
@@ -37,34 +112,24 @@
             }
         }
 
-        public void UpdateIcon()
+        private static void OnProgressStatePropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            if (this.taskbarList == null || this.windowHandle == IntPtr.Zero || this.OverlayIcon == null)
+            var tb = depObj as TaskbarButton;
+
+            if (tb != null)
             {
-                return;
+                tb.UpdateProgressState();
             }
-
-            taskbarList.SetOverlayIcon(this.windowHandle, this.GetOverlayIconHandle(), string.Empty);
         }
 
-        internal SafeHandle GetOverlayIconHandle()
+        private static void OnProgressChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            var type = Type.GetType("MS.Internal.AppModel.IconHelper, PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+            var tb = depObj as TaskbarButton;
 
-            var handle = (SafeHandle)type.InvokeMember(
-                "CreateIconHandleFromBitmapFrame",
-                BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic,
-                null,
-                null,
-                new object[] { this.OverlayIcon });
-
-            return handle;
-        }
-
-        internal void Initialize(IntPtr windowHandle, ITaskbarList3 taskbarList)
-        {
-            this.windowHandle = windowHandle;
-            this.taskbarList = taskbarList;
+            if (tb != null)
+            {
+                tb.UpdateProgressValue();
+            }
         }
     }
 }

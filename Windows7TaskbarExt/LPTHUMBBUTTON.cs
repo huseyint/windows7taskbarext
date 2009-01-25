@@ -6,17 +6,17 @@ namespace Huseyint.Windows7.Native
     [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct LPTHUMBBUTTON
     {
-        public uint dwMask;
+        public uint Mask;
 
-        public uint iId;
+        public uint Id;
 
-        public uint iBitmap;
+        public uint Bitmap;
 
-        public IntPtr hIcon;
+        public IntPtr IconHandle;
 
         [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 260)]
-        public string szTip;
+        public string Tip;
 
-        public uint dwFlags;
+        public uint Flags;
     }
 }

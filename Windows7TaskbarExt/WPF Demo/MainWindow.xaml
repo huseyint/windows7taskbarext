@@ -1,21 +1,57 @@
 ﻿<Window x:Class="Huseyint.Windows7.WPF.Demo.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:win7="clr-namespace:Huseyint.Windows7.WPF;assembly=Huseyint.Windows7.WPF"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:win7="http://huseyint.com/windows7/2009/taskbar"
         Title="Windows 7 Managed Taskbar Extensions Demo" Width="480" Height="320"
         WindowStartupLocation="CenterScreen" Icon="/Images/GenericApplication.png">
 
     <win7:TaskbarExtensions.TaskbarButton>
-        <win7:TaskbarButton x:Name="taskbarButton" />
+        <win7:TaskbarButton OverlayIcon="{Binding OverlayIcon}"
+                            ProgressState="{Binding ProgressState}"
+                            ProgressValue="{Binding ProgressValue}"
+                            ProgressValueTotal="{Binding ProgressValueTotal}" />
     </win7:TaskbarExtensions.TaskbarButton>
+    
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="progressStates">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="win7:ProgressState" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="21" />
+            <Setter Property="Margin" Value="3" />
+        </Style>
+    </Window.Resources>
 
-    <Grid>
-        <ListBox x:Name="iconsList" SelectionChanged="iconsList_SelectionChanged" SelectedIndex="0">
-            <ListBox.Items>
-                <Image Source="/Images/Error.png" />
-                <Image Source="/Images/New.png" />
-                <Image Source="/Images/Warning.png" />
-            </ListBox.Items>
-        </ListBox>
-    </Grid>
+    <StackPanel Margin="4">
+        <GroupBox Header="Overlay Icons:">
+            <StackPanel Orientation="Horizontal">
+                <Label>Icon:</Label>
+                <ComboBox ItemsSource="{Binding OverlayIcons}" SelectedItem="{Binding OverlayIcon}"
+                      VerticalAlignment="Center" HorizontalAlignment="Left" Width="120">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel LastChildFill="True">
+                                <Image Source="{Binding Icon}" Width="16" Height="16" DockPanel.Dock="Left" />
+                                <TextBlock Text="{Binding AccessibilityText}" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </GroupBox>
+        
+        <GroupBox Header="Progress States:">
+            <StackPanel Orientation="Horizontal">
+                <Label>State:</Label>
+                <ComboBox ItemsSource="{Binding Source={StaticResource progressStates}}" 
+                          SelectedItem="{Binding ProgressState}"
+                          VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
+                <Button Command="{Binding SimulateProgressStatesCommand}">Simulate Progress States</Button>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
 </Window>

@@ -10,13 +10,17 @@ namespace Huseyint.Windows7.Native
     {
         /* ITaskbarList */
         void HrInit();
-        void AddTab([In] IntPtr hWnd);
-        void DeleteTab([In] IntPtr hWnd);
-        void ActivateTab([In] IntPtr hWnd);
-        void SetActiveAlt([In] IntPtr hWnd);
+
+        void AddTab([In] IntPtr hwnd);
+
+        void DeleteTab([In] IntPtr hwnd);
+
+        void ActivateTab([In] IntPtr hwnd);
+
+        void SetActiveAlt([In] IntPtr hwnd);
 
         /* ITaskbarList2 */
-        void MarkFullscreenWindow([In] IntPtr hWnd, [In] int fFullscreen);
+        void MarkFullscreenWindow([In] IntPtr hwnd, [In] int fullscreen);
 
         /* ITaskbarList3 */
 
@@ -24,7 +28,7 @@ namespace Huseyint.Windows7.Native
         /// Displays or updates a progress bar hosted in a taskbar button to show 
         /// the specific percentage completed of the full operation.
         /// </summary>
-        /// <param name="hWnd">The handle of the window whose associated taskbar 
+        /// <param name="hwnd">The handle of the window whose associated taskbar 
         /// button is being used as a progress indicator.</param>
         /// <param name="ullCompleted">An application-defined value that indicates 
         /// the proportion of the operation that has been completed at the time 
@@ -32,58 +36,58 @@ namespace Huseyint.Windows7.Native
         /// <param name="ullTotal">An application-defined value that specifies the 
         /// value ullCompleted will have when the operation is complete.</param>
         void SetProgressValue(
-            [In] IntPtr hWnd,
+            [In] IntPtr hwnd,
             [In] ulong ullCompleted,
             [In] ulong ullTotal);
 
         /// <summary>
         /// Sets the type and state of the progress indicator displayed on a taskbar button.
         /// </summary>
-        /// <param name="hWnd">The handle of the window in which the progress of an 
+        /// <param name="hwnd">The handle of the window in which the progress of an 
         /// operation is being shown. This window's associated taskbar button will 
         /// display the progress bar.</param>
         /// <param name="tbpFlags">Flags that control the current state of the progress 
         /// button. Specify only one of the <see cref="TBPFLAG"/>; all states are mutually 
         /// exclusive of all others.</param>
         void SetProgressState(
-            [In] IntPtr hWnd,
+            [In] IntPtr hwnd,
             [In] TBPFLAG tbpFlags);
 
         void RegisterTab(
-            [In] IntPtr hWndTab,
-            [In] IntPtr hWndMDI);
+            [In] IntPtr hwndTab,
+            [In] IntPtr hwndMDI);
 
         void UnregisterTab(
-            [In] IntPtr hWndTab);
+            [In] IntPtr hwndTab);
 
         void SetTabOrder(
-            [In] IntPtr hWndTab,
-            [In] IntPtr hWndInsertBefore);
+            [In] IntPtr hwndTab,
+            [In] IntPtr hwndInsertBefore);
 
         void SetTabActive(
-            [In] IntPtr hWndTab,
-            [In] IntPtr hWndMDI,
+            [In] IntPtr hwndTab,
+            [In] IntPtr hwndMDI,
             [In] TBATFLAG tbatFlags);
 
         void ThumbBarAddButtons(
-            [In] IntPtr hWnd,
-            [In] uint cButtons,
-            [In] LPTHUMBBUTTON pButton);
+            [In] IntPtr hwnd,
+            [In] uint buttons,
+            [In] LPTHUMBBUTTON button);
 
         void ThumbBarUpdateButtons(
-            [In] IntPtr hWnd,
-            [In] uint cButtons,
-            [In] LPTHUMBBUTTON pButton);
+            [In] IntPtr hwnd,
+            [In] uint buttons,
+            [In] LPTHUMBBUTTON button);
 
         void ThumbBarSetImageList(
-            [In] IntPtr hWnd,
-            [In] IntPtr hImageList);
+            [In] IntPtr hwnd,
+            [In] IntPtr imageListHandle);
 
         /// <summary>
         /// Applies an overlay to a taskbar button to indicate application 
         /// status or a notification to the user.
         /// </summary>
-        /// <param name="hWnd">The handle of the window whose associated 
+        /// <param name="hwnd">The handle of the window whose associated 
         /// taskbar button receives the overlay. This handle must belong 
         /// to a calling process associated with the button's application 
         /// and must be a valid HWND or the call is ignored.</param>
@@ -109,16 +113,16 @@ namespace Huseyint.Windows7.Native
         /// an alt text version of the information conveyed by the overlay, 
         /// for accessibility purposes.</param>
         void SetOverlayIcon(
-            [In] IntPtr hWnd,
-            [In] SafeHandle hIcon,
-            [In] string pszDescription);
+            [In] IntPtr hwnd,
+            [In] SafeHandle iconHandle,
+            [In] string description);
 
         void SetThumbnailTooltip(
-            [In] IntPtr hWnd,
-            [In] string pszTip);
+            [In] IntPtr hwnd,
+            [In] string tip);
 
         void SetThumbnailClip(
-            [In] IntPtr hWnd,
-            [In] RECT prcClip);
+            [In] IntPtr hwnd,
+            [In] RECT clip);
     }
 }

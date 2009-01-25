@@ -7,13 +7,36 @@
 
     public static class TaskbarExtensions
     {
+        public static readonly DependencyProperty TaskbarButtonProperty = DependencyProperty.RegisterAttached(
+            "TaskbarButton",
+            typeof(TaskbarButton),
+            typeof(TaskbarExtensions),
+            new UIPropertyMetadata(null, OnTaskbarButtonChanged));
+
         private static uint messageIdentifier;
 
         private static Window window;
 
         private static IntPtr windowHandle;
 
-        private static ITaskbarList3 TaskbarList;
+        private static ITaskbarList3 taskbarList;
+
+        static TaskbarExtensions()
+        {
+            // Since "TaskbarButton" attached property doesn't belong to the WPF's so called 
+            // "Logical Tree", the DataContext can not be inherited from parent Window
+            // and this breaks Data Binding. To solve the issue, the following technique is
+            // applied. See http://blogs.msdn.com/jaimer/archive/2008/11/22/forwarding-the-datagrid-s-datacontext-to-its-columns.aspx
+            // for more info.
+            FrameworkElement.DataContextProperty.AddOwner(typeof(TaskbarButton));
+
+            var metadata = new FrameworkPropertyMetadata(
+                null,
+                FrameworkPropertyMetadataOptions.Inherits,
+                OnDataContextChanged);
+
+            FrameworkElement.DataContextProperty.OverrideMetadata(typeof(Window), metadata);
+        }
 
         public static TaskbarButton GetTaskbarButton(Window window)
         {
@@ -25,11 +48,20 @@
             window.SetValue(TaskbarButtonProperty, value);
         }
 
-        public static readonly DependencyProperty TaskbarButtonProperty = DependencyProperty.RegisterAttached(
-            "TaskbarButton", 
-            typeof(TaskbarButton), 
-            typeof(TaskbarExtensions),
-            new UIPropertyMetadata(null, OnTaskbarButtonChanged));
+        private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var window = d as Window;
+
+            if (window != null)
+            {
+                var taskbarButton = window.GetValue(TaskbarExtensions.TaskbarButtonProperty) as TaskbarButton;
+
+                if (taskbarButton != null)
+                {
+                    taskbarButton.DataContext = e.NewValue;
+                }
+            }
+        }
 
         private static void OnTaskbarButtonChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
@@ -37,11 +69,11 @@
 
             if (window != null)
             {
-                window.Loaded += window_Loaded;
+                window.Loaded += WindowLoaded;
             }
         }
 
-        private static void window_Loaded(object sender, RoutedEventArgs e)
+        private static void WindowLoaded(object sender, RoutedEventArgs e)
         {
             if (window != null)
             {
@@ -54,22 +86,22 @@
 
         private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (messageIdentifier == Win32.WM_NULL)
+            if (messageIdentifier == Win32.WindowMessageNull)
             {
                 messageIdentifier = Win32.RegisterWindowMessage(Win32.TaskbarButtonCreatedMessage);
 
-                Win32.ChangeWindowMessageFilter(messageIdentifier, Win32.MSGFLT_ADD);
+                Win32.ChangeWindowMessageFilter(messageIdentifier, Win32.MessageFilterAdd);
             }
 
-            if (msg == 49345)
+            if (msg == messageIdentifier)
             {
-                TaskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.CLSID_TaskbarList));
+                taskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.ClassIdTaskbarList));
 
                 var taskbarButton = window.GetValue(TaskbarExtensions.TaskbarButtonProperty) as TaskbarButton;
 
                 if (taskbarButton != null)
                 {
-                    taskbarButton.Initialize(windowHandle, TaskbarList);
+                    taskbarButton.Initialize(windowHandle, taskbarList);
 
                     taskbarButton.UpdateIcon();
                 }

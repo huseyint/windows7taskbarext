@@ -13,162 +13,29 @@
 
         private uint messageIdentifier;
 
-        private TaskBarExtensions()
-        {
-            messageIdentifier = Win32.WM_NULL;
-
-            currentOverlayIcon = new IconHandle();
-            currentOverlayIconAccessibilityText = string.Empty;
-            currentProgressState = ProgressState.NoProgress;
-        }
-
-        ~TaskBarExtensions()
-        {
-            Dispose(false);
-        }
-
-        internal IntPtr MainWindowHandle { get; private set; }
-
-        internal ITaskbarList3 TaskbarList { get; private set; }
-
         private IconHandle currentOverlayIcon;
 
         private string currentOverlayIconAccessibilityText;
 
         private ProgressState currentProgressState;
 
-        public bool PreFilterMessage(ref Message m)
+        private TaskBarExtensions()
         {
-            if (messageIdentifier == Win32.WM_NULL)
-            {
-                messageIdentifier = Win32.RegisterWindowMessage(Win32.TaskbarButtonCreatedMessage);
+            this.messageIdentifier = Win32.WindowMessageNull;
 
-                Win32.ChangeWindowMessageFilter(messageIdentifier, Win32.MSGFLT_ADD);
-            }
-
-            if (m.Msg == messageIdentifier)
-            {
-                if (TaskbarList == null)
-                {
-                    MainWindowHandle = m.HWnd;
-
-                    TaskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.CLSID_TaskbarList));
-                }
-
-                if (!currentOverlayIcon.IsInvalid || currentProgressState != ProgressState.NoProgress)
-                {
-                    ThreadPool.QueueUserWorkItem(delegate
-                    {
-                        // HACK!
-                        Thread.Sleep(2000);
-
-                        SetOverlayIconCore(currentOverlayIcon, currentOverlayIconAccessibilityText);
-                        SetProgressStateCore(currentProgressState);
-                    });
-                }
-            }
-
-            return false;
+            this.currentOverlayIcon = new IconHandle();
+            this.currentOverlayIconAccessibilityText = string.Empty;
+            this.currentProgressState = ProgressState.NoProgress;
         }
 
-        public void Dispose()
+        ~TaskBarExtensions()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            this.Dispose(false);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (currentOverlayIcon != null)
-                {
-                    currentOverlayIcon.Dispose();
-                }
-            }
-        }
+        internal IntPtr MainWindowHandle { get; private set; }
 
-        private void SetOverlayIconCore(IconHandle hIcon, string accessibilityText)
-        {
-            if (!currentOverlayIcon.IsInvalid && currentOverlayIcon != hIcon)
-            {
-                currentOverlayIcon.Dispose();
-            }
-
-            currentOverlayIcon = hIcon;
-            currentOverlayIconAccessibilityText = accessibilityText;
-
-            this.TaskbarList.SetOverlayIcon(
-                MainWindowHandle, 
-                currentOverlayIcon,
-                currentOverlayIconAccessibilityText);
-        }
-
-        private bool SetProgressStateCore(ProgressState state)
-        {
-            if (TaskbarList == null)
-            {
-                return false;
-            }
-
-            currentProgressState = state;
-
-            try
-            {
-                this.TaskbarList.SetProgressState(this.MainWindowHandle, (TBPFLAG)state);
-            }
-            catch (InvalidComObjectException)
-            {
-                return false;
-            }
-            catch (COMException ex)
-            {
-                // HRESULT = E_FAIL
-                if (ex.ErrorCode == -2147467259)
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return true;
-        }
-
-        private bool SetProgressValueCore(ulong completed, ulong total)
-        {
-            if (this.TaskbarList == null)
-            {
-                return false;
-            }
-
-            currentProgressState = ProgressState.Normal;
-
-            try
-            {
-                this.TaskbarList.SetProgressValue(this.MainWindowHandle, completed, total);
-            }
-            catch (InvalidComObjectException)
-            {
-                return false;
-            }
-            catch (COMException ex)
-            {
-                // HRESULT = E_FAIL
-                if (ex.ErrorCode == -2147467259)
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return true;
-        }
+        internal ITaskbarList3 TaskbarList { get; private set; }
 
         /// <summary>
         /// Attaches a <see cref="IMessageFilter"/> to current <see cref="Application"/>
@@ -225,11 +92,11 @@
         {
             CheckOperation();
 
-            var hIcon = icon == null ? new IconHandle() : new IconHandle(icon.GetHicon());
+            var iconHandle = icon == null ? new IconHandle() : new IconHandle(icon.GetHicon());
 
             try
             {
-                instance.SetOverlayIconCore(hIcon, accessibilityText ?? string.Empty);
+                instance.SetOverlayIconCore(iconHandle, accessibilityText ?? string.Empty);
             }
             catch (COMException ex)
             {
@@ -308,12 +175,154 @@
         }
         #endregion
 
+        public bool PreFilterMessage(ref Message m)
+        {
+            // Register for the message here...
+            if (this.messageIdentifier == Win32.WindowMessageNull)
+            {
+                this.messageIdentifier = Win32.RegisterWindowMessage(Win32.TaskbarButtonCreatedMessage);
+
+                Win32.ChangeWindowMessageFilter(this.messageIdentifier, Win32.MessageFilterAdd);
+            }
+
+            // ...and receive the message here.
+            if (m.Msg == this.messageIdentifier)
+            {
+                if (this.TaskbarList == null)
+                {
+                    this.MainWindowHandle = m.HWnd;
+
+                    this.TaskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.ClassIdTaskbarList));
+                }
+
+                // When explorer.exe gets closed and re-opened all Taskbar Extensions are lost,
+                // so we should restore them.
+                if (!this.currentOverlayIcon.IsInvalid ||
+                    !string.IsNullOrEmpty(this.currentOverlayIconAccessibilityText) ||
+                    this.currentProgressState != ProgressState.NoProgress)
+                {
+                    ThreadPool.QueueUserWorkItem(delegate
+                    {
+                        // HACK: Immediately setting Taskbar Extensions won't work. The reson is that
+                        // we get the "TaskbarButtonCreatedMessage" a little earlier and the Taskbar
+                        // is not ready yet.
+                        // 2000 milliseconds is just an arbitrarily selected number which worked on my PC.
+                        Thread.Sleep(2000);
+
+                        this.SetOverlayIconCore(this.currentOverlayIcon, this.currentOverlayIconAccessibilityText);
+                        this.SetProgressStateCore(this.currentProgressState);
+                    });
+                }
+            }
+
+            return false;
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (this.currentOverlayIcon != null)
+                {
+                    this.currentOverlayIcon.Dispose();
+                }
+            }
+        }
+
         private static void CheckOperation()
         {
             if (instance == null || instance.TaskbarList == null)
             {
                 throw new InvalidOperationException("TaskBarExtensions is not attached to current Application.");
             }
+        }
+
+        private void SetOverlayIconCore(IconHandle iconHandle, string accessibilityText)
+        {
+            if (!this.currentOverlayIcon.IsInvalid && this.currentOverlayIcon != iconHandle)
+            {
+                this.currentOverlayIcon.Dispose();
+            }
+
+            this.currentOverlayIcon = iconHandle;
+            this.currentOverlayIconAccessibilityText = accessibilityText;
+
+            this.TaskbarList.SetOverlayIcon(
+                this.MainWindowHandle,
+                this.currentOverlayIcon,
+                this.currentOverlayIconAccessibilityText);
+        }
+
+        private bool SetProgressStateCore(ProgressState state)
+        {
+            if (this.TaskbarList == null)
+            {
+                return false;
+            }
+
+            this.currentProgressState = state;
+
+            try
+            {
+                this.TaskbarList.SetProgressState(this.MainWindowHandle, (TBPFLAG)state);
+            }
+            catch (InvalidComObjectException)
+            {
+                return false;
+            }
+            catch (COMException ex)
+            {
+                // HRESULT = E_FAIL
+                if (ex.ErrorCode == -2147467259)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        private bool SetProgressValueCore(ulong completed, ulong total)
+        {
+            if (this.TaskbarList == null)
+            {
+                return false;
+            }
+
+            this.currentProgressState = ProgressState.Normal;
+
+            try
+            {
+                this.TaskbarList.SetProgressValue(this.MainWindowHandle, completed, total);
+            }
+            catch (InvalidComObjectException)
+            {
+                return false;
+            }
+            catch (COMException ex)
+            {
+                // HRESULT = E_FAIL
+                if (ex.ErrorCode == -2147467259)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return true;
         }
     }
 }
