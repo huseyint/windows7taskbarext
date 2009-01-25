@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		IconHandle.cs = IconHandle.cs
 		License.txt = License.txt
 		ProgressState.cs = ProgressState.cs
+		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{F61C4F53-FAA0-4795-932B-C8A74591CF49}"
