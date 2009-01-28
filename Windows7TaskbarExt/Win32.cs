@@ -9,6 +9,10 @@ namespace Huseyint.Windows7.Native
 
         public const uint WindowMessageNull = 0x0000; // WM_NULL
 
+        public const uint WindowMessageCommand = 0x0111; // WM_COMMAND
+
+        public const uint ThumbnailBarButtonClicked = 0x1800; // THBN_CLICKED
+
         public const uint MessageFilterAdd = 1; // MSGFLT_ADD
 
         static Win32()
@@ -27,5 +31,15 @@ namespace Huseyint.Windows7.Native
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DestroyIcon(IntPtr iconHandle);
+
+        public static uint HiWord(IntPtr i)
+        {
+            return ((uint)i.ToInt32()) >> 16;
+        }
+
+        public static uint LoWord(IntPtr i)
+        {
+            return (uint)(i.ToInt32() & 0xffff);
+        }
     }
 }

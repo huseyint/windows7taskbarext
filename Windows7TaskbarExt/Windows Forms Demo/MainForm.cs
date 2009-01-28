@@ -1,6 +1,7 @@
 ﻿namespace Huseyint.Windows7.WindowsForms.Demo
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Reflection;
     using System.Threading;
@@ -9,6 +10,8 @@
 
     public partial class MainForm : Form
     {
+        private IList<ThumbnailBarButton> thumbnailBarButtons;
+
         public MainForm()
         {
             this.InitializeComponent();
@@ -113,6 +116,82 @@
             this.overlayIconsCombo.SelectedIndex = 0;
 
             this.progressStatesCombo.DataSource = Enum.GetValues(typeof(ProgressState));
+        }
+
+        private void AddThumbBarButtonsImageList_Click(object sender, EventArgs e)
+        {
+            this.thumbnailBarButtons = new List<ThumbnailBarButton>()
+            {
+                new ThumbnailBarButton(0, "Foo", true, false, false, true),
+                new ThumbnailBarButton(1, "Bar", false, false, false, true),
+                new ThumbnailBarButton(2, "Baz", false, false, false, false),
+                new ThumbnailBarButton(3, "Quux", true, true, false, true),
+            };
+
+            foreach (var button in this.thumbnailBarButtons)
+            {
+                button.Click += this.ThumbnailBarButton_Click;
+            }
+
+            TaskBarExtensions.AddThumbnailBarButtons(this, this.thumbnailBarButtons, this.iconsImageList);
+
+            this.addThumbBarButtonsImageList.Enabled = false;
+            this.addThumbBarButtonsImages.Enabled = false;
+        }
+
+        private void AddThumbBarButtonsImages_Click(object sender, EventArgs e)
+        {
+            this.thumbnailBarButtons = new List<ThumbnailBarButton>()
+            {
+                this.CreateThumbnailBarImageButton("Error", "Foo", true, false, false, true),
+                this.CreateThumbnailBarImageButton("Info", "Bar", false, false, false, true),
+                this.CreateThumbnailBarImageButton("New", "Baz", false, false, false, false),
+                this.CreateThumbnailBarImageButton("Warning", "Quux", true, true, false, true),
+            };
+
+            foreach (var button in this.thumbnailBarButtons)
+            {
+                button.Click += this.ThumbnailBarButton_Click;
+            }
+
+            TaskBarExtensions.AddThumbnailBarButtons(this, this.thumbnailBarButtons);
+
+            this.addThumbBarButtonsImageList.Enabled = false;
+            this.addThumbBarButtonsImages.Enabled = false;
+        }
+
+        private ThumbnailBarButton CreateThumbnailBarImageButton(
+            string imageName, 
+            string tooltip, 
+            bool isHidden, 
+            bool isDisabled, 
+            bool isDismissedOnClick, 
+            bool hasBackground)
+        {
+            var imagePath = string.Format("Huseyint.Windows7.WindowsForms.Demo.Images.{0}.png", imageName);
+
+            using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream(imagePath))
+            using (var image = (Bitmap)Image.FromStream(stream))
+            {
+                return new ThumbnailBarButton(image, tooltip, isHidden, isDisabled, isDismissedOnClick, hasBackground);
+            }
+        }
+
+        private void ThumbnailBarButton_Click(object sender, EventArgs e)
+        {
+            var button = (ThumbnailBarButton)sender;
+
+            MessageBox.Show(string.Format("Button with tooltip '{0}' clicked.", button.Tooltip));
+        }
+
+        private void UpdateThumbBarButtons_Click(object sender, EventArgs e)
+        {
+            foreach (var button in this.thumbnailBarButtons)
+            {
+                button.IsDisabled = !button.IsDisabled;
+                button.IsHidden = !button.IsHidden;
+                button.HasBackground = !button.HasBackground;
+            }
         }
     }
 }

@@ -9,18 +9,26 @@ namespace Huseyint.Windows7.Native
     internal interface ITaskbarList3
     {
         /* ITaskbarList */
+        [PreserveSig]
         void HrInit();
 
+        [PreserveSig]
         void AddTab([In] IntPtr hwnd);
 
+        [PreserveSig]
         void DeleteTab([In] IntPtr hwnd);
 
+        [PreserveSig]
         void ActivateTab([In] IntPtr hwnd);
 
+        [PreserveSig]
         void SetActiveAlt([In] IntPtr hwnd);
 
         /* ITaskbarList2 */
-        void MarkFullscreenWindow([In] IntPtr hwnd, [In] int fullscreen);
+        [PreserveSig]
+        void MarkFullscreenWindow(
+            [In] IntPtr hwnd, 
+            [In, MarshalAs(UnmanagedType.Bool)] bool fullscreen);
 
         /* ITaskbarList3 */
 
@@ -69,16 +77,50 @@ namespace Huseyint.Windows7.Native
             [In] IntPtr hwndMDI,
             [In] TBATFLAG tbatFlags);
 
+        /// <summary>
+        /// Adds a thumbnail toolbar with a specified set of buttons to the thumbnail image 
+        /// of a window in a taskbar button flyout.
+        /// </summary>
+        /// <param name="hwnd">The handle of the window whose thumbnail representation will 
+        /// receive the toolbar. This handle must belong to the calling process.</param>
+        /// <param name="buttonsCount">The number of buttons defined in the array pointed 
+        /// to by <paramref name="buttons"/>. The maximum number of buttons allowed is 7.</param>
+        /// <param name="buttons">A pointer to an array of <see cref="THUMBBUTTON"/> structures. 
+        /// Each <see cref="THUMBBUTTON"/> defines an individual button to be added to the toolbar. 
+        /// Buttons cannot be added or deleted later, so this must be the full defined set. Buttons 
+        /// also cannot be reordered, so their order in the array, which is the order in which they 
+        /// are displayed left to right, will be their permanent order.</param>
         void ThumbBarAddButtons(
             [In] IntPtr hwnd,
-            [In] uint buttons,
-            [In] LPTHUMBBUTTON button);
+            [In] uint buttonsCount,
+            [In, MarshalAs(UnmanagedType.LPArray)] THUMBBUTTON[] buttons);
 
+        /// <summary>
+        /// Shows, enables, disables, or hides buttons in a thumbnail toolbar as required by the 
+        /// window's current state. A thumbnail toolbar is a toolbar embedded in a thumbnail image 
+        /// of a window in a taskbar button flyout.
+        /// </summary>
+        /// <param name="hwnd">The handle of the window whose thumbnail representation contains 
+        /// the toolbar.</param>
+        /// <param name="buttonsCount">The number of buttons defined in the array <paramref name="buttons"/>. 
+        /// The maximum number of buttons allowed is 7. This array contains only structures that represent 
+        /// existing buttons that are being updated.</param>
+        /// <param name="buttons">An array of <see cref="THUMBBUTTON"/> structures. Each <see cref="THUMBBUTTON"/> 
+        /// defines an individual button. If the button already exists (the iId value is already defined), then that 
+        /// existing button is updated with the information provided in the structure.</param>
         void ThumbBarUpdateButtons(
             [In] IntPtr hwnd,
-            [In] uint buttons,
-            [In] LPTHUMBBUTTON button);
+            [In] uint buttonsCount,
+            [In, MarshalAs(UnmanagedType.LPArray)] THUMBBUTTON[] buttons);
 
+        /// <summary>
+        /// Specifies an image list that contains button images for a toolbar embedded in a thumbnail 
+        /// image of a window in a taskbar button flyout.
+        /// </summary>
+        /// <param name="hwnd"> The handle of the window whose thumbnail representation contains the 
+        /// toolbar to be updated. This handle must belong to the calling process.</param>
+        /// <param name="imageListHandle">The handle of the image list that contains all button images 
+        /// to be used in the toolbar.</param>
         void ThumbBarSetImageList(
             [In] IntPtr hwnd,
             [In] IntPtr imageListHandle);
@@ -119,7 +161,7 @@ namespace Huseyint.Windows7.Native
 
         void SetThumbnailTooltip(
             [In] IntPtr hwnd,
-            [In] string tip);
+            [In, MarshalAs(UnmanagedType.LPWStr)] string tip);
 
         void SetThumbnailClip(
             [In] IntPtr hwnd,

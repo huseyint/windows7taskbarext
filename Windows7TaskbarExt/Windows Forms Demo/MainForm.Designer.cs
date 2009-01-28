@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.setOverlayIconButton = new System.Windows.Forms.Button();
             this.overlayIconsGroup = new System.Windows.Forms.GroupBox();
@@ -39,8 +40,15 @@
             this.setProgressStateButton = new System.Windows.Forms.Button();
             this.progressStatesCombo = new System.Windows.Forms.ComboBox();
             this.progressStateLabel = new System.Windows.Forms.Label();
+            this.iconsImageList = new System.Windows.Forms.ImageList(this.components);
+            this.thumbnailToolbarGroup = new System.Windows.Forms.GroupBox();
+            this.addThumbBarButtonsImageList = new System.Windows.Forms.Button();
+            this.orLabel = new System.Windows.Forms.Label();
+            this.addThumbBarButtonsImages = new System.Windows.Forms.Button();
+            this.updateThumbBarButtons = new System.Windows.Forms.Button();
             this.overlayIconsGroup.SuspendLayout();
             this.progressStatesGroup.SuspendLayout();
+            this.thumbnailToolbarGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // setOverlayIconButton
@@ -150,11 +158,73 @@
             this.progressStateLabel.TabIndex = 0;
             this.progressStateLabel.Text = "State:";
             // 
+            // iconsImageList
+            // 
+            this.iconsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("iconsImageList.ImageStream")));
+            this.iconsImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.iconsImageList.Images.SetKeyName(0, "Error.png");
+            this.iconsImageList.Images.SetKeyName(1, "Info.png");
+            this.iconsImageList.Images.SetKeyName(2, "New.png");
+            this.iconsImageList.Images.SetKeyName(3, "Warning.png");
+            // 
+            // thumbnailToolbarGroup
+            // 
+            this.thumbnailToolbarGroup.Controls.Add(this.updateThumbBarButtons);
+            this.thumbnailToolbarGroup.Controls.Add(this.addThumbBarButtonsImages);
+            this.thumbnailToolbarGroup.Controls.Add(this.orLabel);
+            this.thumbnailToolbarGroup.Controls.Add(this.addThumbBarButtonsImageList);
+            this.thumbnailToolbarGroup.Location = new System.Drawing.Point(12, 160);
+            this.thumbnailToolbarGroup.Name = "thumbnailToolbarGroup";
+            this.thumbnailToolbarGroup.Size = new System.Drawing.Size(440, 85);
+            this.thumbnailToolbarGroup.TabIndex = 4;
+            this.thumbnailToolbarGroup.TabStop = false;
+            this.thumbnailToolbarGroup.Text = "Thumbnail Toolbar:";
+            // 
+            // addThumbBarButtonsImageList
+            // 
+            this.addThumbBarButtonsImageList.Location = new System.Drawing.Point(9, 21);
+            this.addThumbBarButtonsImageList.Name = "addThumbBarButtonsImageList";
+            this.addThumbBarButtonsImageList.Size = new System.Drawing.Size(180, 23);
+            this.addThumbBarButtonsImageList.TabIndex = 0;
+            this.addThumbBarButtonsImageList.Text = "Add buttons using ImageList";
+            this.addThumbBarButtonsImageList.UseVisualStyleBackColor = true;
+            this.addThumbBarButtonsImageList.Click += new System.EventHandler(this.AddThumbBarButtonsImageList_Click);
+            // 
+            // orLabel
+            // 
+            this.orLabel.AutoSize = true;
+            this.orLabel.Location = new System.Drawing.Point(195, 26);
+            this.orLabel.Name = "orLabel";
+            this.orLabel.Size = new System.Drawing.Size(45, 13);
+            this.orLabel.TabIndex = 1;
+            this.orLabel.Text = "-- OR --";
+            // 
+            // addThumbBarButtonsImages
+            // 
+            this.addThumbBarButtonsImages.Location = new System.Drawing.Point(246, 21);
+            this.addThumbBarButtonsImages.Name = "addThumbBarButtonsImages";
+            this.addThumbBarButtonsImages.Size = new System.Drawing.Size(180, 23);
+            this.addThumbBarButtonsImages.TabIndex = 2;
+            this.addThumbBarButtonsImages.Text = "Add buttons using images";
+            this.addThumbBarButtonsImages.UseVisualStyleBackColor = true;
+            this.addThumbBarButtonsImages.Click += new System.EventHandler(this.AddThumbBarButtonsImages_Click);
+            // 
+            // updateThumbBarButtons
+            // 
+            this.updateThumbBarButtons.Location = new System.Drawing.Point(168, 50);
+            this.updateThumbBarButtons.Name = "updateThumbBarButtons";
+            this.updateThumbBarButtons.Size = new System.Drawing.Size(100, 23);
+            this.updateThumbBarButtons.TabIndex = 3;
+            this.updateThumbBarButtons.Text = "Update Buttons";
+            this.updateThumbBarButtons.UseVisualStyleBackColor = true;
+            this.updateThumbBarButtons.Click += new System.EventHandler(this.UpdateThumbBarButtons_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(464, 282);
+            this.Controls.Add(this.thumbnailToolbarGroup);
             this.Controls.Add(this.progressStatesGroup);
             this.Controls.Add(this.overlayIconsGroup);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
@@ -169,6 +239,8 @@
             this.overlayIconsGroup.PerformLayout();
             this.progressStatesGroup.ResumeLayout(false);
             this.progressStatesGroup.PerformLayout();
+            this.thumbnailToolbarGroup.ResumeLayout(false);
+            this.thumbnailToolbarGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -185,6 +257,12 @@
         private System.Windows.Forms.ComboBox progressStatesCombo;
         private System.Windows.Forms.Label progressStateLabel;
         private System.Windows.Forms.Button simulateProgressStatesButton;
+        private System.Windows.Forms.ImageList iconsImageList;
+        private System.Windows.Forms.GroupBox thumbnailToolbarGroup;
+        private System.Windows.Forms.Button addThumbBarButtonsImageList;
+        private System.Windows.Forms.Button updateThumbBarButtons;
+        private System.Windows.Forms.Button addThumbBarButtonsImages;
+        private System.Windows.Forms.Label orLabel;
     }
 }
 

@@ -16,10 +16,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{F61C4F53-FAA0-4795-932B-C8A74591CF49}"
 	ProjectSection(SolutionItems) = preProject
 		ITaskbarList3.cs = ITaskbarList3.cs
-		LPTHUMBBUTTON.cs = LPTHUMBBUTTON.cs
 		RECT.cs = RECT.cs
 		TBATFLAG.cs = TBATFLAG.cs
 		TBPFLAG.cs = TBPFLAG.cs
+		THBFLAGS.cs = THBFLAGS.cs
+		THBMASK.cs = THBMASK.cs
+		THUMBBUTTON.cs = THUMBBUTTON.cs
 		Win32.cs = Win32.cs
 	EndProjectSection
 EndProject

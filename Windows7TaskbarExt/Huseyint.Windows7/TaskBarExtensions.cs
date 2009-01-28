@@ -1,6 +1,7 @@
 ﻿namespace Huseyint.Windows7.WindowsForms
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Threading;
@@ -11,6 +12,8 @@
     {
         private static TaskBarExtensions instance;
 
+        private static Dictionary<IntPtr, IList<ThumbnailBarButton>> thumbnailBarButtons;
+
         private uint messageIdentifier;
 
         private IconHandle currentOverlayIcon;
@@ -18,6 +21,11 @@
         private string currentOverlayIconAccessibilityText;
 
         private ProgressState currentProgressState;
+
+        static TaskBarExtensions()
+        {
+            thumbnailBarButtons = new Dictionary<IntPtr, IList<ThumbnailBarButton>>();
+        }
 
         private TaskBarExtensions()
         {
@@ -175,6 +183,42 @@
         }
         #endregion
 
+        public static void AddThumbnailBarButtons(Form form, IList<ThumbnailBarButton> buttons)
+        {
+            AddThumbnailBarButtons(form, buttons, null);
+        }
+
+        public static void AddThumbnailBarButtons(Form form, IList<ThumbnailBarButton> buttons, ImageList imagelist)
+        {
+            CheckOperation();
+
+            var buttonCount = buttons.Count;
+
+            if (buttonCount < 1 || buttonCount > 7)
+            {
+                throw new ArgumentOutOfRangeException("buttons", "At least 1 and at most 7 buttons should be provided.");
+            }
+
+            var handle = form.Handle;
+
+            if (imagelist != null)
+            {
+                instance.TaskbarList.ThumbBarSetImageList(handle, imagelist.Handle);
+            }
+            
+            var unmanagedButtons = new THUMBBUTTON[buttonCount];
+            
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                buttons[i].Initialize(handle);
+                unmanagedButtons[i] = buttons[i].GetUnmanagedButton();
+            }
+
+            instance.TaskbarList.ThumbBarAddButtons(handle, (uint)buttonCount, unmanagedButtons);
+
+            thumbnailBarButtons[handle] = buttons;
+        }
+
         public bool PreFilterMessage(ref Message m)
         {
             // Register for the message here...
@@ -214,6 +258,23 @@
                     });
                 }
             }
+            else if (m.Msg == Win32.WindowMessageCommand && Win32.HiWord(m.WParam) == Win32.ThumbnailBarButtonClicked)
+            {
+                var buttonId = Win32.LoWord(m.WParam);
+                
+                IList<ThumbnailBarButton> buttons;
+                if (thumbnailBarButtons.TryGetValue(m.HWnd, out buttons))
+                {
+                    foreach (var b in buttons)
+                    {
+                        if (b.Id == buttonId)
+                        {
+                            b.FireClickEvent();
+                            break;
+                        }
+                    }
+                }
+            }
 
             return false;
         }
@@ -222,6 +283,14 @@
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        internal static void UpdateThumbnailBarButton(ThumbnailBarButton button)
+        {
+            instance.TaskbarList.ThumbBarUpdateButtons(
+                button.WindowHandle,
+                (uint)1,
+                new THUMBBUTTON[1] { button.GetUnmanagedButton() });
         }
 
         protected virtual void Dispose(bool disposing)

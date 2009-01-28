@@ -59,9 +59,6 @@
     <Compile Include="..\ITaskbarList3.cs">
       <Link>Native\ITaskbarList3.cs</Link>
     </Compile>
-    <Compile Include="..\LPTHUMBBUTTON.cs">
-      <Link>Native\LPTHUMBBUTTON.cs</Link>
-    </Compile>
     <Compile Include="..\ProgressState.cs">
       <Link>ProgressState.cs</Link>
     </Compile>
@@ -73,6 +70,15 @@
     </Compile>
     <Compile Include="..\TBPFLAG.cs">
       <Link>Native\TBPFLAG.cs</Link>
+    </Compile>
+    <Compile Include="..\THBFLAGS.cs">
+      <Link>Native\THBFLAGS.cs</Link>
+    </Compile>
+    <Compile Include="..\THBMASK.cs">
+      <Link>Native\THBMASK.cs</Link>
+    </Compile>
+    <Compile Include="..\THUMBBUTTON.cs">
+      <Link>Native\THUMBBUTTON.cs</Link>
     </Compile>
     <Compile Include="..\Win32.cs">
       <Link>Native\Win32.cs</Link>
