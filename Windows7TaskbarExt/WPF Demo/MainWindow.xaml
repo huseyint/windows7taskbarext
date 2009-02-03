@@ -59,7 +59,6 @@
         <GroupBox Header="Thumbnail Toolbar Buttons:">
             <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding UpdateThumbBarButtonsCommand}">Update Thumbnail Bar Buttons</Button>
-                <Button Click="Button_Click">Test</Button>
             </StackPanel>
         </GroupBox>
     </StackPanel>
