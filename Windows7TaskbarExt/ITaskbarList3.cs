@@ -133,7 +133,7 @@ namespace Huseyint.Windows7.Native
         /// taskbar button receives the overlay. This handle must belong 
         /// to a calling process associated with the button's application 
         /// and must be a valid HWND or the call is ignored.</param>
-        /// <param name="hIcon">
+        /// <param name="iconHandle">
         ///  The handle of an icon to use as the overlay. This should be 
         ///  a small icon, measuring 16x16 pixels at 96 dots per inch (dpi). 
         ///  If an overlay icon is already applied to the taskbar button, 
@@ -151,7 +151,7 @@ namespace Huseyint.Windows7.Native
         ///  after you've called SetOverlayIcon because the taskbar makes 
         ///  and uses its own copy of the icon.
         /// </param>
-        /// <param name="pszDescription">A pointer to a string that provides 
+        /// <param name="description">A pointer to a string that provides 
         /// an alt text version of the information conveyed by the overlay, 
         /// for accessibility purposes.</param>
         void SetOverlayIcon(

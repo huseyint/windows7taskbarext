@@ -1,5 +1,8 @@
 namespace Huseyint.Windows7
 {
+    /// <summary>
+    /// State of the progress bar on Taskbar Button.
+    /// </summary>
     public enum ProgressState
     {
         /// <summary>

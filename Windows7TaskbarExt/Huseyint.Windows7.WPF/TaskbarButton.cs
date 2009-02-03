@@ -1,6 +1,8 @@
 ﻿namespace Huseyint.Windows7.WPF
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Windows;
     using Huseyint.Windows7.Native;
 
@@ -30,9 +32,22 @@
             typeof(TaskbarButton),
             new UIPropertyMetadata(ulong.MaxValue, OnProgressChanged));
 
+        public static readonly DependencyProperty ThumbnailBarButtonsProperty = DependencyProperty.Register(
+            "ThumbnailBarButtons", 
+            typeof(IList), 
+            typeof(TaskbarButton), 
+            new UIPropertyMetadata(new List<ThumbnailBarButton>()));
+
+        private static readonly Dictionary<IntPtr, IList<ThumbnailBarButton>> thumbnailBarButtonsCache;
+
         private IntPtr windowHandle;
 
         private ITaskbarList3 taskbarList;
+
+        static TaskbarButton()
+        {
+            thumbnailBarButtonsCache = new Dictionary<IntPtr, IList<ThumbnailBarButton>>();
+        }
 
         public OverlayIcon OverlayIcon
         {
@@ -56,6 +71,20 @@
         {
             get { return (ulong)GetValue(ProgressValueTotalProperty); }
             set { SetValue(ProgressValueTotalProperty, value); }
+        }
+
+        public IList ThumbnailBarButtons
+        {
+            get { return (IList)GetValue(ThumbnailBarButtonsProperty); }
+            set { SetValue(ThumbnailBarButtonsProperty, value); }
+        }
+
+        internal static Dictionary<IntPtr, IList<ThumbnailBarButton>> ThumbnailBarButtonsCache
+        {
+            get
+            {
+                return thumbnailBarButtonsCache;
+            }
         }
 
         internal void UpdateIcon()
@@ -102,6 +131,33 @@
             this.taskbarList = taskbarList;
         }
 
+        internal void AddThumbnailBarButtons()
+        {
+            var buttons = (IList<ThumbnailBarButton>)this.ThumbnailBarButtons;
+            var buttonCount = buttons.Count;
+
+            if (buttonCount < 1)
+            {
+                return;
+            }
+
+            var unmanagedButtons = new THUMBBUTTON[buttonCount];
+
+            for (int i = 0; i < buttonCount; i++)
+            {
+                buttons[i].Initialize(this.windowHandle);
+                unmanagedButtons[i] = buttons[i].GetUnmanagedButton();
+                buttons[i].OnUpdate += this.TaskbarButton_OnUpdate;
+            }
+
+            this.taskbarList.ThumbBarAddButtons(this.windowHandle, (uint)buttonCount, unmanagedButtons);
+
+            if (!thumbnailBarButtonsCache.ContainsKey(this.windowHandle))
+            {
+                thumbnailBarButtonsCache.Add(this.windowHandle, buttons);
+            }
+        }
+
         private static void OnOverlayIconPropertyChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
             var tb = depObj as TaskbarButton;
@@ -130,6 +186,14 @@
             {
                 tb.UpdateProgressValue();
             }
+        }
+
+        private void TaskbarButton_OnUpdate(ThumbnailBarButton button)
+        {
+            this.taskbarList.ThumbBarUpdateButtons(
+                this.windowHandle,
+                (uint)1,
+                new THUMBBUTTON[1] { button.GetUnmanagedButton() });
         }
     }
 }

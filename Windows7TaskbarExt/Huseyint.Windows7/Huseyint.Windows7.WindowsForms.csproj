@@ -25,6 +25,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -68,6 +70,9 @@
     </Compile>
     <Compile Include="..\THUMBBUTTON.cs">
       <Link>Native\THUMBBUTTON.cs</Link>
+    </Compile>
+    <Compile Include="..\ThumbnailBarButtonBase.cs">
+      <Link>ThumbnailBarButtonBase.cs</Link>
     </Compile>
     <Compile Include="..\Win32.cs">
       <Link>Native\Win32.cs</Link>

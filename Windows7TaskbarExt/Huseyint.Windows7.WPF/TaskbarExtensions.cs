@@ -1,6 +1,9 @@
 ﻿namespace Huseyint.Windows7.WPF
 {
     using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Interop;
     using Huseyint.Windows7.Native;
@@ -15,11 +18,9 @@
 
         private static uint messageIdentifier;
 
-        private static Window window;
-
-        private static IntPtr windowHandle;
-
         private static ITaskbarList3 taskbarList;
+
+        private static Dictionary<IntPtr, Window> windows;
 
         static TaskbarExtensions()
         {
@@ -36,6 +37,8 @@
                 OnDataContextChanged);
 
             FrameworkElement.DataContextProperty.OverrideMetadata(typeof(Window), metadata);
+
+            windows = new Dictionary<IntPtr, Window>();
         }
 
         public static TaskbarButton GetTaskbarButton(Window window)
@@ -65,7 +68,7 @@
 
         private static void OnTaskbarButtonChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            window = depObj as Window;
+            var window = depObj as Window;
 
             if (window != null)
             {
@@ -75,12 +78,16 @@
 
         private static void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            var window = sender as Window;
+
             if (window != null)
             {
-                windowHandle = new WindowInteropHelper(window).Handle;
+                var windowHandle = new WindowInteropHelper(window).Handle;
 
                 var source = HwndSource.FromHwnd(windowHandle);
                 source.AddHook(new HwndSourceHook(WndProc));
+
+                windows.Add(windowHandle, window);
             }
         }
 
@@ -95,19 +102,72 @@
 
             if (msg == messageIdentifier)
             {
-                taskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.ClassIdTaskbarList));
-
-                var taskbarButton = window.GetValue(TaskbarExtensions.TaskbarButtonProperty) as TaskbarButton;
-
-                if (taskbarButton != null)
+                if (taskbarList == null)
                 {
-                    taskbarButton.Initialize(windowHandle, taskbarList);
+                    taskbarList = (ITaskbarList3)Activator.CreateInstance(Type.GetTypeFromCLSID(Win32.ClassIdTaskbarList));
+                }
 
-                    taskbarButton.UpdateIcon();
+                Window window;
+
+                if (windows.TryGetValue(hwnd, out window))
+                {
+                    var taskbarButton = window.GetValue(TaskbarExtensions.TaskbarButtonProperty) as TaskbarButton;
+
+                    if (taskbarButton != null)
+                    {
+                        taskbarButton.Initialize(hwnd, taskbarList);
+
+                        taskbarButton.AddThumbnailBarButtons();
+
+                        // HACK: Immediately setting Taskbar Extensions won't work. The reason is that
+                        // we get the "TaskbarButtonCreatedMessage" a little earlier and the Taskbar
+                        // is not ready yet.
+                        // 2000 milliseconds is just an arbitrarily selected number which *worked on my machine*.
+                        // Use BackgroundWorker to wait 2 seconds and tunnel the real work to UI thread.
+                        var worker = new BackgroundWorker();
+
+                        worker.WorkerReportsProgress = true;
+
+                        worker.DoWork += delegate(object sender, DoWorkEventArgs e)
+                        {
+                            Thread.Sleep(2000);
+                            ((BackgroundWorker)sender).ReportProgress(0, taskbarButton);
+                        };
+
+                        worker.ProgressChanged += ExplorerRestarted;
+
+                        worker.RunWorkerAsync();
+                    }
+                }
+            }
+            else if (msg == Win32.WindowMessageCommand && Win32.HiWord(wParam) == Win32.ThumbnailBarButtonClicked)
+            {
+                var buttonId = Win32.LoWord(wParam);
+
+                IList<ThumbnailBarButton> buttons;
+                if (TaskbarButton.ThumbnailBarButtonsCache.TryGetValue(hwnd, out buttons))
+                {
+                    foreach (var b in buttons)
+                    {
+                        if (b.Id == buttonId)
+                        {
+                            b.FireClickEvent();
+                            break;
+                        }
+                    }
                 }
             }
 
             return IntPtr.Zero;
+        }
+
+        private static void ExplorerRestarted(object sender, ProgressChangedEventArgs e)
+        {
+            var taskbarButton = (TaskbarButton)e.UserState;
+
+            taskbarButton.UpdateIcon();
+            taskbarButton.UpdateProgressValue();
+            taskbarButton.UpdateProgressState();
         }
     }
 }

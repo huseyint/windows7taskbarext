@@ -16,12 +16,12 @@ namespace Huseyint.Windows7.Native
         THB_ICON = 0x0002,
         
         /// <summary>
-        /// The <see cref="THUMBBUTTON.Tip"/> member contains valid information.
+        /// The <see cref="THUMBBUTTON.ToolTip"/> member contains valid information.
         /// </summary>
         THB_TOOLTIP = 0x0004,
         
         /// <summary>
-        /// The <see cref="THUMBBUTTON.Falgs"/> member contains valid information.
+        /// The <see cref="THUMBBUTTON.Flags"/> member contains valid information.
         /// </summary>
         THB_FLAGS = 0x0008,
     }

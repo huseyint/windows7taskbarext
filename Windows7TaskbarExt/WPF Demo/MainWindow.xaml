@@ -4,13 +4,15 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:win7="http://huseyint.com/windows7/2009/taskbar"
         Title="Windows 7 Managed Taskbar Extensions Demo" Width="480" Height="320"
-        WindowStartupLocation="CenterScreen" Icon="/Images/GenericApplication.png">
+        WindowStartupLocation="CenterScreen" Icon="/WPFDemo;component/Images/GenericApplication.png">
 
     <win7:TaskbarExtensions.TaskbarButton>
         <win7:TaskbarButton OverlayIcon="{Binding OverlayIcon}"
                             ProgressState="{Binding ProgressState}"
                             ProgressValue="{Binding ProgressValue}"
-                            ProgressValueTotal="{Binding ProgressValueTotal}" />
+                            ProgressValueTotal="{Binding ProgressValueTotal}"
+                            ThumbnailBarButtons="{Binding ThumbnailBarButtons}">
+        </win7:TaskbarButton>
     </win7:TaskbarExtensions.TaskbarButton>
     
     <Window.Resources>
@@ -51,6 +53,13 @@
                           SelectedItem="{Binding ProgressState}"
                           VerticalAlignment="Center" HorizontalAlignment="Left" Width="120" />
                 <Button Command="{Binding SimulateProgressStatesCommand}">Simulate Progress States</Button>
+            </StackPanel>
+        </GroupBox>
+        
+        <GroupBox Header="Thumbnail Toolbar Buttons:">
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding UpdateThumbBarButtonsCommand}">Update Thumbnail Bar Buttons</Button>
+                <Button Click="Button_Click">Test</Button>
             </StackPanel>
         </GroupBox>
     </StackPanel>

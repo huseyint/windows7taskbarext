@@ -40,9 +40,10 @@
             this.OverlayIcons = new List<OverlayIcon>()
             {
                 new OverlayIcon(null),
-                new OverlayIcon(new BitmapImage(new Uri(@"/Images/Error.png", UriKind.Relative)), "Error"),
-                new OverlayIcon(new BitmapImage(new Uri(@"/Images/New.png", UriKind.Relative)), "New"),
-                new OverlayIcon(new BitmapImage(new Uri(@"/Images/Warning.png", UriKind.Relative)), "Warning"),
+                new OverlayIcon(new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Error.png")), "Error"),
+                new OverlayIcon(new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Info.png")), "Info"),
+                new OverlayIcon(new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/New.png")), "New"),
+                new OverlayIcon(new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Warning.png")), "Warning"),
             };
 
             this.SimulateProgressStatesCommand = new SimpleCommand()
@@ -50,9 +51,62 @@
                 CanExecuteDelegate = o => true,
                 ExecuteDelegate = this.ExecuteSimulateProgressStatesCommand
             };
+
+            this.ThumbnailBarButtons = new List<ThumbnailBarButton>()
+            {
+                new ThumbnailBarButton()
+                {
+                    Tooltip = "Foo",
+                    Icon = new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Error.png")),
+                    IsHidden = true,
+                    IsDisabled = false,
+                    IsDismissedOnClick = false,
+                    HasBackground = true,
+                },
+                new ThumbnailBarButton()
+                {
+                    Icon = new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Info.png")),
+                    Tooltip = "Bar",
+                    IsHidden = false,
+                    IsDisabled = false,
+                    IsDismissedOnClick = false,
+                    HasBackground = true,
+                },
+                new ThumbnailBarButton()
+                {
+                    Icon = new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/New.png")),
+                    Tooltip = "Baz",
+                    IsHidden = false,
+                    IsDisabled = false,
+                    IsDismissedOnClick = true,
+                    HasBackground = false,
+                },
+                new ThumbnailBarButton()
+                {
+                    Icon = new BitmapImage(new Uri(@"pack://application:,,,/WPFDemo;component/Images/Warning.png")),
+                    Tooltip = "Quux",
+                    IsHidden = true,
+                    IsDisabled = true,
+                    IsDismissedOnClick = false,
+                    HasBackground = true,
+                },
+            };
+
+            foreach (var button in this.ThumbnailBarButtons)
+            {
+                button.Click += this.ThumbnailBarButton_Click;
+            }
+
+            this.UpdateThumbBarButtonsCommand = new SimpleCommand()
+            {
+                CanExecuteDelegate = o => true,
+                ExecuteDelegate = this.ExecuteUpdateThumbBarButtonsCommand
+            };
         }
 
         public ICommand SimulateProgressStatesCommand { get; private set; }
+
+        public ICommand UpdateThumbBarButtonsCommand { get; private set; }
 
         public IList<OverlayIcon> OverlayIcons { get; private set; }
 
@@ -93,6 +147,8 @@
             get { return (ulong)GetValue(ProgressValueTotalProperty); }
             set { SetValue(ProgressValueTotalProperty, value); }
         }
+
+        public IList<ThumbnailBarButton> ThumbnailBarButtons { get; private set; }
 
         private void ExecuteSimulateProgressStatesCommand(object o)
         {
@@ -217,6 +273,23 @@
 
                 this.ProgressState = ProgressState.NoProgress;
             }
+        }
+
+        private void ExecuteUpdateThumbBarButtonsCommand(object o)
+        {
+            foreach (var button in this.ThumbnailBarButtons)
+            {
+                button.IsDisabled = !button.IsDisabled;
+                button.IsHidden = !button.IsHidden;
+                button.HasBackground = !button.HasBackground;
+            }
+        }
+
+        private void ThumbnailBarButton_Click(object sender, EventArgs e)
+        {
+            var button = (ThumbnailBarButton)sender;
+
+            MessageBox.Show(string.Format("Button with tooltip '{0}' clicked.", button.Tooltip));
         }
     }
 }

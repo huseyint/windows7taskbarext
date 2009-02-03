@@ -42,10 +42,10 @@
             this.progressStateLabel = new System.Windows.Forms.Label();
             this.iconsImageList = new System.Windows.Forms.ImageList(this.components);
             this.thumbnailToolbarGroup = new System.Windows.Forms.GroupBox();
-            this.addThumbBarButtonsImageList = new System.Windows.Forms.Button();
-            this.orLabel = new System.Windows.Forms.Label();
-            this.addThumbBarButtonsImages = new System.Windows.Forms.Button();
             this.updateThumbBarButtons = new System.Windows.Forms.Button();
+            this.addThumbBarButtonsImages = new System.Windows.Forms.Button();
+            this.orLabel = new System.Windows.Forms.Label();
+            this.addThumbBarButtonsImageList = new System.Windows.Forms.Button();
             this.overlayIconsGroup.SuspendLayout();
             this.progressStatesGroup.SuspendLayout();
             this.thumbnailToolbarGroup.SuspendLayout();
@@ -180,24 +180,15 @@
             this.thumbnailToolbarGroup.TabStop = false;
             this.thumbnailToolbarGroup.Text = "Thumbnail Toolbar:";
             // 
-            // addThumbBarButtonsImageList
+            // updateThumbBarButtons
             // 
-            this.addThumbBarButtonsImageList.Location = new System.Drawing.Point(9, 21);
-            this.addThumbBarButtonsImageList.Name = "addThumbBarButtonsImageList";
-            this.addThumbBarButtonsImageList.Size = new System.Drawing.Size(180, 23);
-            this.addThumbBarButtonsImageList.TabIndex = 0;
-            this.addThumbBarButtonsImageList.Text = "Add buttons using ImageList";
-            this.addThumbBarButtonsImageList.UseVisualStyleBackColor = true;
-            this.addThumbBarButtonsImageList.Click += new System.EventHandler(this.AddThumbBarButtonsImageList_Click);
-            // 
-            // orLabel
-            // 
-            this.orLabel.AutoSize = true;
-            this.orLabel.Location = new System.Drawing.Point(195, 26);
-            this.orLabel.Name = "orLabel";
-            this.orLabel.Size = new System.Drawing.Size(45, 13);
-            this.orLabel.TabIndex = 1;
-            this.orLabel.Text = "-- OR --";
+            this.updateThumbBarButtons.Location = new System.Drawing.Point(168, 50);
+            this.updateThumbBarButtons.Name = "updateThumbBarButtons";
+            this.updateThumbBarButtons.Size = new System.Drawing.Size(100, 23);
+            this.updateThumbBarButtons.TabIndex = 3;
+            this.updateThumbBarButtons.Text = "Update Buttons";
+            this.updateThumbBarButtons.UseVisualStyleBackColor = true;
+            this.updateThumbBarButtons.Click += new System.EventHandler(this.UpdateThumbBarButtons_Click);
             // 
             // addThumbBarButtonsImages
             // 
@@ -209,15 +200,24 @@
             this.addThumbBarButtonsImages.UseVisualStyleBackColor = true;
             this.addThumbBarButtonsImages.Click += new System.EventHandler(this.AddThumbBarButtonsImages_Click);
             // 
-            // updateThumbBarButtons
+            // orLabel
             // 
-            this.updateThumbBarButtons.Location = new System.Drawing.Point(168, 50);
-            this.updateThumbBarButtons.Name = "updateThumbBarButtons";
-            this.updateThumbBarButtons.Size = new System.Drawing.Size(100, 23);
-            this.updateThumbBarButtons.TabIndex = 3;
-            this.updateThumbBarButtons.Text = "Update Buttons";
-            this.updateThumbBarButtons.UseVisualStyleBackColor = true;
-            this.updateThumbBarButtons.Click += new System.EventHandler(this.UpdateThumbBarButtons_Click);
+            this.orLabel.AutoSize = true;
+            this.orLabel.Location = new System.Drawing.Point(195, 26);
+            this.orLabel.Name = "orLabel";
+            this.orLabel.Size = new System.Drawing.Size(45, 13);
+            this.orLabel.TabIndex = 1;
+            this.orLabel.Text = "-- OR --";
+            // 
+            // addThumbBarButtonsImageList
+            // 
+            this.addThumbBarButtonsImageList.Location = new System.Drawing.Point(9, 21);
+            this.addThumbBarButtonsImageList.Name = "addThumbBarButtonsImageList";
+            this.addThumbBarButtonsImageList.Size = new System.Drawing.Size(180, 23);
+            this.addThumbBarButtonsImageList.TabIndex = 0;
+            this.addThumbBarButtonsImageList.Text = "Add buttons using ImageList";
+            this.addThumbBarButtonsImageList.UseVisualStyleBackColor = true;
+            this.addThumbBarButtonsImageList.Click += new System.EventHandler(this.AddThumbBarButtonsImageList_Click);
             // 
             // MainForm
             // 

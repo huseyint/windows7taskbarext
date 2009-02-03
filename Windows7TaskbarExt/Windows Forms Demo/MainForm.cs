@@ -145,7 +145,7 @@
             {
                 this.CreateThumbnailBarImageButton("Error", "Foo", true, false, false, true),
                 this.CreateThumbnailBarImageButton("Info", "Bar", false, false, false, true),
-                this.CreateThumbnailBarImageButton("New", "Baz", false, false, false, false),
+                this.CreateThumbnailBarImageButton("New", "Baz", false, false, true, false),
                 this.CreateThumbnailBarImageButton("Warning", "Quux", true, true, false, true),
             };
 

@@ -10,5 +10,12 @@
 
             this.DataContext = new MainWindowViewModel();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var w = new MainWindow();
+
+            w.Show();
+        }
     }
 }

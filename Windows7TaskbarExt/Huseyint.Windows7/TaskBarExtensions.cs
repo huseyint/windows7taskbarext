@@ -2,17 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Windows.Forms;
     using Huseyint.Windows7.Native;
 
+    /// <summary>
+    /// Manages application's integration to Windows 7 Taskbar.
+    /// </summary>
     public class TaskBarExtensions : IMessageFilter, IDisposable
     {
         private static TaskBarExtensions instance;
 
         private static Dictionary<IntPtr, IList<ThumbnailBarButton>> thumbnailBarButtons;
+
+        private static Dictionary<IntPtr, IntPtr> thumbnailBarImageListHandles;
 
         private uint messageIdentifier;
 
@@ -25,6 +31,7 @@
         static TaskBarExtensions()
         {
             thumbnailBarButtons = new Dictionary<IntPtr, IList<ThumbnailBarButton>>();
+            thumbnailBarImageListHandles = new Dictionary<IntPtr, IntPtr>();
         }
 
         private TaskBarExtensions()
@@ -36,6 +43,9 @@
             this.currentProgressState = ProgressState.NoProgress;
         }
 
+        /// <summary>
+        /// Finalizer for <see cref="TaskBarExtensions"/> type.
+        /// </summary>
         ~TaskBarExtensions()
         {
             this.Dispose(false);
@@ -50,7 +60,7 @@
         /// to intercept window messages.
         /// </summary>
         /// <remarks>
-        /// This method must be called before calling <see cref="Application.Run"/>.
+        /// This method must be called before calling <see cref="Application.Run(Form)"/>.
         /// </remarks>
         /// <exception cref="InvalidOperationException">If an instance is attached before.</exception>
         public static void Attach()
@@ -183,42 +193,40 @@
         }
         #endregion
 
+        /// <summary>
+        /// Adds buttons to thumbnail toolbar with <see cref="Bitmap"/> icons.
+        /// </summary>
+        /// <remarks>
+        /// By design of the taskbar, you can add buttons only one time. When necessary, you may add
+        /// hidden buttons and make them visible when appropriate. Maximum 7 buttons is allowed.
+        /// </remarks>
+        /// <param name="form">The window which the buttons will be added to its taskbar thumbnail.</param>
+        /// <param name="buttons">The buttons to be added.</param>
         public static void AddThumbnailBarButtons(Form form, IList<ThumbnailBarButton> buttons)
         {
-            AddThumbnailBarButtons(form, buttons, null);
+            AddThumbnailBarButtons(form.Handle, buttons, IntPtr.Zero);
         }
 
+        /// <summary>
+        /// Adds buttons to thumbnail toolbar with icons reside in an <see cref="ImageList"/>.
+        /// </summary>
+        /// <remarks>
+        /// By design of the taskbar, you can add buttons only one time. When necessary, you may add
+        /// hidden buttons and make them visible when appropriate. Maximum 7 buttons is allowed.
+        /// </remarks>
+        /// <param name="form">The window which the buttons will be added to its taskbar thumbnail.</param>
+        /// <param name="buttons">The buttons to be added.</param>
+        /// <param name="imagelist">The imagelist which button icons will be used from.</param>
         public static void AddThumbnailBarButtons(Form form, IList<ThumbnailBarButton> buttons, ImageList imagelist)
         {
-            CheckOperation();
-
-            var buttonCount = buttons.Count;
-
-            if (buttonCount < 1 || buttonCount > 7)
-            {
-                throw new ArgumentOutOfRangeException("buttons", "At least 1 and at most 7 buttons should be provided.");
-            }
-
-            var handle = form.Handle;
-
-            if (imagelist != null)
-            {
-                instance.TaskbarList.ThumbBarSetImageList(handle, imagelist.Handle);
-            }
-            
-            var unmanagedButtons = new THUMBBUTTON[buttonCount];
-            
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                buttons[i].Initialize(handle);
-                unmanagedButtons[i] = buttons[i].GetUnmanagedButton();
-            }
-
-            instance.TaskbarList.ThumbBarAddButtons(handle, (uint)buttonCount, unmanagedButtons);
-
-            thumbnailBarButtons[handle] = buttons;
+            AddThumbnailBarButtons(form.Handle, buttons, imagelist.Handle);
         }
 
+        /// <summary>
+        /// Filters application's window message loop.
+        /// </summary>
+        /// <param name="m">Current message.</param>
+        /// <returns>This implementation always returns false which allows the message pass.</returns>
         public bool PreFilterMessage(ref Message m)
         {
             // Register for the message here...
@@ -243,19 +251,27 @@
                 // so we should restore them.
                 if (!this.currentOverlayIcon.IsInvalid ||
                     !string.IsNullOrEmpty(this.currentOverlayIconAccessibilityText) ||
-                    this.currentProgressState != ProgressState.NoProgress)
+                    this.currentProgressState != ProgressState.NoProgress ||
+                    thumbnailBarButtons.Count > 0)
                 {
-                    ThreadPool.QueueUserWorkItem(delegate
-                    {
-                        // HACK: Immediately setting Taskbar Extensions won't work. The reson is that
-                        // we get the "TaskbarButtonCreatedMessage" a little earlier and the Taskbar
-                        // is not ready yet.
-                        // 2000 milliseconds is just an arbitrarily selected number which worked on my PC.
-                        Thread.Sleep(2000);
+                    // HACK: Immediately setting Taskbar Extensions won't work. The reason is that
+                    // we get the "TaskbarButtonCreatedMessage" a little earlier and the Taskbar
+                    // is not ready yet.
+                    // 2000 milliseconds is just an arbitrarily selected number which *worked on my machine*.
+                    // Use BackgroundWorker to wait 2 seconds and tunnel the real work to UI thread.
+                    var worker = new BackgroundWorker();
 
-                        this.SetOverlayIconCore(this.currentOverlayIcon, this.currentOverlayIconAccessibilityText);
-                        this.SetProgressStateCore(this.currentProgressState);
-                    });
+                    worker.WorkerReportsProgress = true;
+
+                    worker.DoWork += delegate(object sender, DoWorkEventArgs e)
+                    {
+                        Thread.Sleep(2000);
+                        ((BackgroundWorker)sender).ReportProgress(0);
+                    };
+
+                    worker.ProgressChanged += this.ExplorerRestarted;
+
+                    worker.RunWorkerAsync();
                 }
             }
             else if (m.Msg == Win32.WindowMessageCommand && Win32.HiWord(m.WParam) == Win32.ThumbnailBarButtonClicked)
@@ -279,6 +295,9 @@
             return false;
         }
 
+        /// <summary>
+        /// Disposes current instance.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
@@ -293,6 +312,10 @@
                 new THUMBBUTTON[1] { button.GetUnmanagedButton() });
         }
 
+        /// <summary>
+        /// Disposes current instance.
+        /// </summary>
+        /// <param name="disposing">True if being disposed in a deterministic way.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -304,11 +327,68 @@
             }
         }
 
+        private static void AddThumbnailBarButtons(IntPtr windowHandle, IList<ThumbnailBarButton> buttons, IntPtr imagelistHandle)
+        {
+            CheckOperation();
+
+            var buttonCount = buttons.Count;
+
+            if (buttonCount < 1 || buttonCount > 7)
+            {
+                throw new ArgumentOutOfRangeException("buttons", "At least 1 and at most 7 buttons should be provided.");
+            }
+
+            if (imagelistHandle != IntPtr.Zero)
+            {
+                instance.TaskbarList.ThumbBarSetImageList(windowHandle, imagelistHandle);
+
+                if (!thumbnailBarImageListHandles.ContainsKey(windowHandle))
+                {
+                    thumbnailBarImageListHandles.Add(windowHandle, imagelistHandle);
+                }
+            }
+
+            var unmanagedButtons = new THUMBBUTTON[buttonCount];
+
+            for (int i = 0; i < buttonCount; i++)
+            {
+                buttons[i].Initialize(windowHandle);
+                unmanagedButtons[i] = buttons[i].GetUnmanagedButton();
+            }
+
+            instance.TaskbarList.ThumbBarAddButtons(windowHandle, (uint)buttonCount, unmanagedButtons);
+
+            if (!thumbnailBarButtons.ContainsKey(windowHandle))
+            {
+                thumbnailBarButtons.Add(windowHandle, buttons);
+            }
+        }
+
         private static void CheckOperation()
         {
             if (instance == null || instance.TaskbarList == null)
             {
                 throw new InvalidOperationException("TaskBarExtensions is not attached to current Application.");
+            }
+        }
+
+        private void ExplorerRestarted(object sender, ProgressChangedEventArgs e)
+        {
+            this.SetOverlayIconCore(this.currentOverlayIcon, this.currentOverlayIconAccessibilityText);
+            this.SetProgressStateCore(this.currentProgressState);
+            foreach (var item in thumbnailBarButtons)
+            {
+                var windowHandle = item.Key;
+
+                IntPtr imageListHandle;
+                if (thumbnailBarImageListHandles.TryGetValue(windowHandle, out imageListHandle))
+                {
+                    AddThumbnailBarButtons(windowHandle, item.Value, imageListHandle);
+                }
+                else
+                {
+                    AddThumbnailBarButtons(windowHandle, item.Value, IntPtr.Zero);
+                }
             }
         }
 
