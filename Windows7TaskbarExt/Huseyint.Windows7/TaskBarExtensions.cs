@@ -65,6 +65,11 @@
         /// <exception cref="InvalidOperationException">If an instance is attached before.</exception>
         public static void Attach()
         {
+            if (!Win32.IsWindows7)
+            {
+                return;
+            }
+
             if (instance == null)
             {
                 instance = new TaskBarExtensions();
@@ -108,6 +113,11 @@
         /// <returns>true if overlay is set successfully.</returns>
         public static bool SetOverlayIcon(Bitmap icon, string accessibilityText)
         {
+            if (!Win32.IsWindows7)
+            {
+                return false;
+            }
+
             CheckOperation();
 
             var iconHandle = icon == null ? new IconHandle() : new IconHandle(icon.GetHicon());
@@ -138,6 +148,11 @@
         /// <returns>true if overlay is cleared successfully.</returns>
         public static bool ClearOverlayIcon()
         {
+            if (!Win32.IsWindows7)
+            {
+                return false;
+            }
+
             CheckOperation();
 
             try
@@ -170,6 +185,11 @@
         /// <returns>true if progress state is set successfully.</returns>
         public static bool SetProgressState(ProgressState state)
         {
+            if (!Win32.IsWindows7)
+            {
+                return false;
+            }
+
             CheckOperation();
 
             return instance.SetProgressStateCore(state);
@@ -187,6 +207,11 @@
         /// <returns>true if progress value is set successfully.</returns>
         public static bool SetProgressValue(ulong completed, ulong total)
         {
+            if (!Win32.IsWindows7)
+            {
+                return false;
+            }
+
             CheckOperation();
 
             return instance.SetProgressValueCore(completed, total);
@@ -306,6 +331,11 @@
 
         internal static void UpdateThumbnailBarButton(ThumbnailBarButton button)
         {
+            if (!Win32.IsWindows7)
+            {
+                return;
+            }
+
             instance.TaskbarList.ThumbBarUpdateButtons(
                 button.WindowHandle,
                 (uint)1,
@@ -329,6 +359,11 @@
 
         private static void AddThumbnailBarButtons(IntPtr windowHandle, IList<ThumbnailBarButton> buttons, IntPtr imagelistHandle)
         {
+            if (!Win32.IsWindows7)
+            {
+                return;
+            }
+
             CheckOperation();
 
             var buttonCount = buttons.Count;

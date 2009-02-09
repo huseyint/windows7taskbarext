@@ -17,10 +17,14 @@ namespace Huseyint.Windows7.Native
 
         static Win32()
         {
+            IsWindows7 = Environment.OSVersion.Version >= new Version(6, 1, 7000, 0);
+
             ClassIdTaskbarList = new Guid("56FDF344-FD6D-11d0-958A-006097C9A090");
         }
 
         public static Guid ClassIdTaskbarList { get; private set; } // CLSID_TaskbarList
+
+        public static bool IsWindows7 { get; private set; }
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern uint RegisterWindowMessage(string str);

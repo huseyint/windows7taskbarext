@@ -24,6 +24,11 @@
 
         static TaskbarExtensions()
         {
+            if (!Win32.IsWindows7)
+            {
+                return;
+            }
+
             // Since "TaskbarButton" attached property doesn't belong to the WPF's so called 
             // "Logical Tree", the DataContext can not be inherited from parent Window
             // and this breaks Data Binding. To solve the issue, the following technique is
@@ -68,6 +73,11 @@
 
         private static void OnTaskbarButtonChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
+            if (!Win32.IsWindows7)
+            {
+                return;
+            }
+
             var window = depObj as Window;
 
             if (window != null)
